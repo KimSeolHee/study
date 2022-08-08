@@ -1,6 +1,7 @@
 package com.iu.start.bankMembers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,6 +9,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.iu.start.member.BankMembersDAO;
+import com.iu.start.member.BankMembersDTO;
 
 /**
  * Servlet implementation class BankMembers
@@ -33,6 +37,7 @@ public class MemberController extends HttpServlet {
 //		response.setCharacterEncoding("UTF-8");
 		System.out.println("멤버관리");
 		
+		BankMembersDAO dao = new BankMembersDAO();
 		String path = request.getPathInfo();
 		
 		if(path.equals("/login")) {
@@ -48,7 +53,47 @@ public class MemberController extends HttpServlet {
 //			return;
 		}else if(path.equals("/join")) {
 			path = "/WEB-INF/view/member/join.jsp";
-		}	
+			String method = request.getMethod();
+			if(method.equals("POST")) {
+				BankMembersDTO dto = new BankMembersDTO();
+				dto.setId(request.getParameter("id"));
+				dto.setPw(request.getParameter("pw"));
+				dto.setName(request.getParameter("name"));
+				dto.setEmail(request.getParameter("email"));
+				dto.setPhone(request.getParameter("phone"));
+				
+				try {
+					int result = dao.setJoin(dto);
+					if(result == 1) {
+						System.out.println("성공");
+					}else {
+						System.out.println("실패");
+					}
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			};
+			
+		} else if(path.equals("/search")) {
+			String method = request.getMethod();
+			if(method.equals("GET")) {
+				path = "/WEB-INF/view/member/search.jsp";				
+			}else {
+				String search = request.getParameter("search");
+				System.out.println(search);
+				try {
+					ArrayList<BankMembersDTO> ar = dao.getSearchById(search);
+					request.setAttribute("list", ar);
+					path="/WEB-INF/view/member/list.jsp";
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		RequestDispatcher view = request.getRequestDispatcher(path);
 		view.forward(request, response);
 		

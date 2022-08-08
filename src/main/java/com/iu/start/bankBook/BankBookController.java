@@ -34,18 +34,25 @@ public class BankBookController extends HttpServlet {
 		if(path.equals("/list")) {
 			try {
 				ArrayList<BankBookDTO> ar = bankBookDAO.getList();
-				for(int i = 0; i <ar.size();i++) {
-					System.out.println(ar.get(i).getBookNum());
-					System.out.println(ar.get(i).getBookName());
-					System.out.println(ar.get(i).getBookRate());
-					System.out.println(ar.get(i).getBookSale());
-				}
+				request.setAttribute("list", ar);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			path = "/WEB-INF/view/bankbook/list.jsp";
 		} else if(path.equals("/detail")) {
+			//parameter사용
+			String bookNum = request.getParameter("bookNum");
+			BankBookDTO dto = new BankBookDTO();
+			Long l = Long.parseLong(bookNum);
+			dto.setBookNum(l);
+			try {
+				dto = bankBookDAO.getDetail(dto);
+				request.setAttribute("detail", dto);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			path = "../WEB-INF/view/bankbook/detail.jsp";
 		}	
 			RequestDispatcher view = request.getRequestDispatcher(path);

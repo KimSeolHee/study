@@ -10,6 +10,7 @@
 	<h1>Index page</h1>
 	<a href="./member/login">Login</a>
 	<a href="./member/join">Join</a>
+	<a href="./member/search">Search Member</a>
 	<a href="./bankbook/list">List</a>
 </body>
 </html>
